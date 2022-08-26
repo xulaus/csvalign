@@ -1,4 +1,3 @@
-#![feature(hash_drain_filter)]
 use clap::Parser;
 use indicatif::ProgressBar;
 use std::{collections::HashMap, error::Error, fs::File};
@@ -43,16 +42,15 @@ fn main() -> Result<(), Box<dyn Error>> {
         headers
     };
 
-    let mut writer = csv::Writer::from_writer(File::create("out.csv")?);
-
-    writer.write_record(&headers)?;
-
     if headers.len() == 0 {
         if args.verbose {
             println!("Nothing to do, as csv would be empty");
         }
         return Ok(());
     }
+
+    let mut writer = csv::Writer::from_writer(File::create("out.csv")?);
+    writer.write_record(&headers)?;
 
     println!("Concatinating {} files", args.input_files.len());
     let pb = ProgressBar::new(args.input_files.len() as u64);
