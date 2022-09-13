@@ -49,7 +49,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Ok(());
     }
 
-    let mut writer = csv::Writer::from_writer(File::create("out.csv")?);
+    let mut writer = csv::Writer::from_writer(File::create(args.out)?);
     writer.write_record(&headers)?;
 
     println!("Concatinating {} files", args.input_files.len());
