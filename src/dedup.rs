@@ -10,7 +10,7 @@ enum UniqType {
 
 /// Take a single csv file and make one of the columns unique
 #[derive(Parser, Debug)]
-pub struct MakeUniqArgs {
+pub struct DedupArgs {
     input_file: String,
     #[arg(short, long)]
     verbose: bool,
@@ -29,7 +29,7 @@ pub struct MakeUniqArgs {
     out: String,
 }
 
-pub fn csvmakeuniq(args: MakeUniqArgs) -> Result<(), Box<dyn Error>> {
+pub fn csvdedup(args: DedupArgs) -> Result<(), Box<dyn Error>> {
     let mut reader = csv::Reader::from_path(args.input_file)?;
     let mut writer = csv::Writer::from_path(args.out)?;
     writer.write_record(reader.headers()?)?;
