@@ -49,7 +49,6 @@ Arguments:
   <UNIQUE_COLUMN>  Column to ensure every entry is unique in
 
 Options:
-  -v, --verbose
       --max-by <MAX_BY>  Choose which entry to keep by keeping the maximum value in this column
       --min-by <MIN_BY>  Choose which entry to keep by keeping the minimum value in this column
   -o, --out <OUT>

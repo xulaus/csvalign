@@ -12,8 +12,6 @@ enum UniqType {
 #[derive(Parser, Debug)]
 pub struct DedupArgs {
     input_file: String,
-    #[arg(short, long)]
-    verbose: bool,
     /// Column to ensure every entry is unique in
     unique_column: String,
 
