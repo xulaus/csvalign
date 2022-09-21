@@ -1,11 +1,11 @@
 [package]
-name = "csvalign"
-version = "0.1.0"
+name = "csv"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = {version = "3.2.17", features = ["color", "derive"] }
+clap = {git = "https://github.com/clap-rs/clap.git", features = ["derive"] }
 csv = "1.1.6"
 indicatif = "0.17.0"
