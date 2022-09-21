@@ -2,7 +2,7 @@ use clap::Parser;
 use indicatif::ProgressBar;
 use std::{collections::BTreeMap, error::Error};
 
-/// Align several csv by column name and concatenate them
+/// Align several csv files by column name and concatenate them
 #[derive(Parser, Debug)]
 pub struct AlignArgs {
     /// Only use columns that are in at least this many files

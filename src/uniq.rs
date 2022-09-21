@@ -8,7 +8,7 @@ enum UniqType {
     Min(usize),
 }
 
-/// Align several csv by column name and concatenate them
+/// Take a single csv file and make one of the columns unique
 #[derive(Parser, Debug)]
 pub struct MakeUniqArgs {
     input_file: String,
