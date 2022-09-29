@@ -40,7 +40,7 @@ Take a single csv file and make one of the columns unique.
 
 ```
 $ csv dedup --help
-Align several csv by column name and concatenate them
+Take a single csv file and make one of the columns unique
 
 Usage: csv dedup [OPTIONS] --out <OUT> <INPUT_FILE> <UNIQUE_COLUMN>
 

@@ -15,11 +15,11 @@ pub struct DedupArgs {
     /// Column to ensure every entry is unique in
     unique_column: String,
 
-    /// Choose which enty to keep by keeping the maximum value in this column
+    /// Choose which entry to keep by keeping the maximum value in this column
     #[arg(long, group = "select")]
     max_by: Option<String>,
 
-    /// Choose which enty to keep by keeping the minimum value in this column
+    /// Choose which entry to keep by keeping the minimum value in this column
     #[arg(long, group = "select")]
     min_by: Option<String>,
 
