@@ -1,6 +1,6 @@
 use clap::Parser;
 use indicatif::ProgressBar;
-use std::{collections::BTreeMap, error::Error};
+use std::{collections::BTreeMap, error::Error, fs::File, io};
 
 /// Align several csv files by column name and concatenate them
 #[derive(Parser, Debug)]
@@ -9,8 +9,9 @@ pub struct AlignArgs {
     #[arg(default_value_t = 1, long)]
     at_least: usize,
     input_files: Vec<String>,
+    /// File to output to, if not specified standard out will be used
     #[arg(short, long)]
-    out: String,
+    out: Option<String>,
     #[arg(short, long)]
     verbose: bool,
 }
@@ -30,28 +31,31 @@ pub fn csvalign(args: AlignArgs) -> Result<(), Box<dyn Error>> {
             }
         }
         if args.verbose {
-            println!("Found {} columns", headers.len())
+            eprintln!("Found {} columns", headers.len())
         }
         headers.retain(|_k, &mut v| v > args.at_least);
         let mut headers = headers.into_keys().collect::<Vec<_>>();
         headers.sort();
         if args.verbose && args.at_least > 1 {
-            println!("{} columns left after filtering", headers.len())
+            eprintln!("{} columns left after filtering", headers.len())
         }
         headers
     };
 
     if headers.len() == 0 {
         if args.verbose {
-            println!("Nothing to do, as csv would be empty");
+            eprintln!("Nothing to do, as csv would be empty");
         }
         return Ok(());
     }
 
-    let mut writer = csv::Writer::from_path(args.out)?;
+    let mut writer: csv::Writer<Box<dyn io::Write>> = csv::Writer::from_writer(match args.out {
+        Some(path) => Box::new(File::create(path)?),
+        None => Box::new(io::stdout()),
+    });
     writer.write_record(&headers)?;
 
-    println!("Concatinating {} files", args.input_files.len());
+    eprintln!("Concatinating {} files", args.input_files.len());
     let pb = ProgressBar::new(args.input_files.len() as u64);
     for file in args.input_files.iter() {
         let mut reader = csv::Reader::from_path(file)?;
@@ -76,7 +80,7 @@ pub fn csvalign(args: AlignArgs) -> Result<(), Box<dyn Error>> {
         pb.inc(1);
     }
     pb.finish_and_clear();
-    println!("Done!");
+    eprintln!("Done!");
 
     Ok(())
 }

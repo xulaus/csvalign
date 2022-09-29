@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::{collections::BTreeMap, error::Error};
+use std::{collections::BTreeMap, error::Error, fs::File, io};
 
 #[derive(Debug)]
 enum UniqType {
@@ -23,13 +23,17 @@ pub struct DedupArgs {
     #[arg(long, group = "select")]
     min_by: Option<String>,
 
+    /// File to output to, if not specified standard out will be used
     #[arg(short, long)]
-    out: String,
+    out: Option<String>,
 }
 
 pub fn csvdedup(args: DedupArgs) -> Result<(), Box<dyn Error>> {
     let mut reader = csv::Reader::from_path(args.input_file)?;
-    let mut writer = csv::Writer::from_path(args.out)?;
+    let mut writer: csv::Writer<Box<dyn io::Write>> = csv::Writer::from_writer(match args.out {
+        Some(path) => Box::new(File::create(path)?),
+        None => Box::new(io::stdout()),
+    });
     writer.write_record(reader.headers()?)?;
     let this_headers = reader.headers()?;
     let unique_col = this_headers
