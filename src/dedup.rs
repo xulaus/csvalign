@@ -34,11 +34,10 @@ pub fn csvdedup(args: DedupArgs) -> Result<(), Box<dyn Error>> {
         Some(path) => Box::new(File::create(path)?),
         None => Box::new(io::stdout()),
     });
-    writer.write_record(reader.headers()?)?;
     let this_headers = reader.headers()?;
     let unique_col = this_headers
         .iter()
-        .position(|x| x == args.unique_column)
+        .position(|x| x.trim() == args.unique_column.trim())
         .ok_or("Couldn't find column in input csv")?;
 
     let select_type = if let Some(col) = args.max_by {
@@ -56,6 +55,8 @@ pub fn csvdedup(args: DedupArgs) -> Result<(), Box<dyn Error>> {
     } else {
         UniqType::First
     };
+
+    writer.write_record(reader.headers()?)?;
     let mut known_entries: BTreeMap<String, csv::StringRecord> = BTreeMap::new();
     for file_row in reader.records() {
         let row = &file_row?;
