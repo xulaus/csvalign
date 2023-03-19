@@ -24,7 +24,7 @@ pub fn csvfixwidth(args: FixwidthArgs) -> Result<(), Box<dyn Error>> {
             col_sizes.extend(vec![0; pos_additional]);
         }
         for (i, val) in row.iter().enumerate() {
-            col_sizes[i] = max(col_sizes[i], val.len())
+            col_sizes[i] = max(col_sizes[i], val.trim().len())
         }
     }
 
@@ -44,23 +44,24 @@ pub fn csvfixwidth(args: FixwidthArgs) -> Result<(), Box<dyn Error>> {
             .iter()
             .zip(&col_sizes)
             .map(|(cell, size)| {
-                if cell.is_empty() {
-                    size - cell.len()
-                } else {
+                let trimmed =  cell.trim();
+                if trimmed.is_empty() {
                     0
+                } else {
+                    size - trimmed.len()
                 }
             })
             .collect();
         let rec = row.iter().enumerate().map(|(i, cell)| {
             if i == 0 {
-                cell.to_owned()
+                cell.trim().to_owned()
             } else if padding[i] > 0 {
-                format!("{:w$}{}", "", cell, w = padding[i - 1] + 1)
+                format!("{:w$}{}", "", cell.trim(), w = padding[i - 1] + 1)
             } else {
                 format!(
                     "{:w1$}{:w2$}",
                     "",
-                    cell,
+                    cell.trim(),
                     w1 = padding[i - 1] + 1,
                     w2 = col_sizes[i]
                 )

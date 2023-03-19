@@ -84,7 +84,7 @@ dependencies = [
 
 [[package]]
 name = "csv"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "clap",
  "csv 1.1.6",
