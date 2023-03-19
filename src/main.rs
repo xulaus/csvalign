@@ -1,5 +1,5 @@
 use clap::Parser;
-use std::error::Error;
+use color_eyre::eyre::Result;
 
 mod align;
 use align::{csvalign, AlignArgs};
@@ -17,7 +17,8 @@ enum Args {
     FixWidth(FixwidthArgs),
 }
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<()> {
+    color_eyre::install()?;
     let args = Args::parse();
     match args {
         Args::Align(args) => return csvalign(args),

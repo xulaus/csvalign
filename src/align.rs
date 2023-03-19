@@ -1,6 +1,7 @@
 use clap::Parser;
+use color_eyre::eyre::{WrapErr, Result};
 use indicatif::ProgressBar;
-use std::{collections::BTreeMap, error::Error, fs::File, io};
+use std::{collections::BTreeMap, fs::File, io};
 
 /// Align several csv files by column name and concatenate them
 #[derive(Parser, Debug)]
@@ -16,7 +17,7 @@ pub struct AlignArgs {
     verbose: bool,
 }
 
-pub fn csvalign(args: AlignArgs) -> Result<(), Box<dyn Error>> {
+pub fn csvalign(args: AlignArgs) -> Result<()> {
     let headers = {
         let mut headers: BTreeMap<String, usize> = BTreeMap::new();
         for file in args.input_files.iter() {
@@ -67,7 +68,7 @@ pub fn csvalign(args: AlignArgs) -> Result<(), Box<dyn Error>> {
                 .collect()
         };
         for file_row in reader.records() {
-            let row = file_row?;
+            let row = &file_row.wrap_err(format!("Failed to parse {}", &file))?;
             for field in header_locations.iter() {
                 if let Some(loc) = field {
                     writer.write_field(row.get(*loc).unwrap())?;

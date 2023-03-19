@@ -1,6 +1,8 @@
 use clap::Parser;
+use color_eyre::eyre::{WrapErr, Result};
 use std::cmp::max;
-use std::{error::Error, fs::File, io};
+use std::{fs::File, io};
+
 
 /// Pretty print the CSV, still in csv format
 #[derive(Parser, Debug)]
@@ -12,13 +14,13 @@ pub struct FixwidthArgs {
     out: Option<String>,
 }
 
-pub fn csvfixwidth(args: FixwidthArgs) -> Result<(), Box<dyn Error>> {
+pub fn csvfixwidth(args: FixwidthArgs) -> Result<()> {
     let mut reader = csv::ReaderBuilder::new()
         .has_headers(false)
         .from_path(&args.input_file)?;
     let mut col_sizes = vec![];
     for file_row in reader.records() {
-        let row = &file_row?;
+        let row = &file_row.wrap_err(format!("Failed to parse {}", &args.input_file))?;
         let additional = (row.len() as i32) - (col_sizes.len() as i32);
         if let Ok(pos_additional) = additional.try_into() {
             col_sizes.extend(vec![0; pos_additional]);
